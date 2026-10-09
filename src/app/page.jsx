@@ -1,29 +1,27 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
+import WorkoutLibrary from "@/components/WorkoutLibrary";
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-black text-white">
-      <Navbar />
 
-      <Hero />
+      {/* Main Content */}
+      <div className="mx-6 my-12 border-y border-[#2A2D35]">
 
-      <section
-        id="library"
-        className="mx-auto min-h-screen max-w-7xl px-6 py-20"
-      >
-        <p className="text-sm tracking-[0.2em] text-[#C2F800]">
-          THE LIBRARY
-        </p>
+        <Navbar />
 
-        <h2 className="mt-3 text-4xl font-bold">
-          WORKOUT LIBRARY
-        </h2>
+        <Hero />
 
-        <p className="mt-3 text-gray-400">
-          Twelve lifts covering every major muscle group.
-        </p>
-      </section>
+        <WorkoutLibrary />
+
+      </div>
+
+      {/* Footer */}
+      <footer>
+        {/* Footer will be added later */}
+      </footer>
+
     </main>
   );
 }
