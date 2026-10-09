@@ -1,4 +1,3 @@
-import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import WorkoutLibrary from "@/components/WorkoutLibrary";
 
@@ -8,13 +7,8 @@ export default function Home() {
 
       {/* Main Content */}
       <div className="border-y border-[#2A2D35]">
-
-        <Navbar />
-
         <Hero />
-
         <WorkoutLibrary />
-
       </div>
 
       {/* Footer */}
