@@ -3,7 +3,7 @@ import Link from "next/link";
 
 const Hero = () => {
   return (
-    <section className="mx-6 my-12 border border-[#2A2D35] bg-[#15171D]">
+    <section className=" border border-[#2A2D35] bg-[#15171D]">
       <div className="mx-auto flex min-h-[600px] max-w-6xl items-center gap-24 px-10 py-16">
 
         {/* Left Content */}
