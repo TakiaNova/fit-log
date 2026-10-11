@@ -6,7 +6,7 @@ export default function Home() {
     <main className="min-h-screen bg-black text-white">
 
       {/* Main Content */}
-      <div className="border-y border-[#2A2D35]">
+      <div className="mx-6 my-12 border-y border-[#2A2D35]">
         <Hero />
         <WorkoutLibrary />
       </div>

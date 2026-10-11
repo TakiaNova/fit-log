@@ -26,28 +26,26 @@ export default function Navbar() {
   ];
 
   return (
-    <header className="m-0 w-full border-b border-white/10 bg-black p-0 text-white">
+      <header className="fixed inset-x-0 top-0 z-50 m-0 w-full border-b border-gray-800 bg-black p-0 text-white">
       <nav className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-5 py-4 sm:px-8 lg:px-10">
-        {/* Logo */}
-        <Link
-          href="/"
-          className="flex shrink-0 items-center gap-2.5"
-          aria-label="FitLog home"
-        >
-          <Image
-            src="/assets/logo.png"
-            alt="FitLog"
-            width={36}
-            height={36}
-            priority
-            className="h-9 w-9 object-contain"
-          />
-
-          <span className="text-xl font-black tracking-tight sm:text-2xl">
-            FIT<span className="text-[#C2F800]">LOG</span>
-          </span>
-        </Link>
-
+{/* Logo */}
+<Link
+  href="/"
+  className="flex shrink-0 items-center gap-2.5"
+  aria-label="FitLog home"
+>
+  <Image
+    src="/assets/logo.png"
+    alt="FitLog"
+    width={36}
+    height={36}
+    priority
+    className="h-9 w-9 shrink-0 object-contain"
+  />
+  <span className="inline-flex items-center text-xl font-medium leading-none tracking-tight sm:text-2xl">
+    FITLOG
+  </span>
+</Link>
         {/* Desktop Navigation */}
         <div className="hidden items-center gap-1 sm:flex">
           {links.map((link) => (
@@ -64,27 +62,31 @@ export default function Navbar() {
             </Link>
           ))}
         </div>
+{/* Plan and Saved */}
+<div className="flex shrink-0 items-center gap-4">
+  {/* Plan */}
+  <Link
+    href="/my-plan"
+    className="flex items-center gap-2 text-sm font-semibold text-white transition hover:text-[#ccff00]"
+  >
+    <span>Plan</span>
+    <span className="flex h-6 w-6 items-center justify-center rounded-full border border-[#ccff00] bg-[#ccff00] text-xs font-bold text-black">
+      {plan.length}
+    </span>
+  </Link>
 
-        {/* Plan and Saved */}
-        <div className="flex shrink-0 items-center gap-2">
-          <Link
-            href="/my-plan"
-            className="flex items-center gap-2 rounded-full bg-[#C2F800] px-3.5 py-2 text-xs font-bold text-black transition hover:bg-[#d5ff38] sm:px-4 sm:text-sm"
-          >
-            <span>Plan</span>
-            <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-black/10 px-1">
-              {plan.length}
-            </span>
-          </Link>
+  {/* Saved */}
+  <Link
+    href="/my-plan"
+    className="flex items-center gap-2 border-white/30 px-3 py-2 text-sm font-semibold text-white transition hover:border-[#ccff00]"
+  >
+    <span>Saved</span>
+    <span className="flex h-6 w-6 items-center justify-center rounded-full border border-white/40 bg-black text-xs font-bold text-white">
+      {saved.length}
+    </span>
+  </Link>
+</div>
 
-          <Link
-            href="/my-plan"
-            className="flex items-center gap-2 rounded-full border border-white/15 px-3.5 py-2 text-xs font-semibold text-gray-300 transition hover:border-[#C2F800]/60 hover:text-[#C2F800] sm:px-4 sm:text-sm"
-          >
-            <span>Saved</span>
-            <span>{saved.length}</span>
-          </Link>
-        </div>
       </nav>
 
       {/* Mobile Navigation */}
