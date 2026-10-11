@@ -14,7 +14,7 @@ export default function Navbar() {
 
   const links = [
     {
-      label: "Workouts",
+      label: "Workout",
       href: "/",
       active: pathname === "/" || isWorkoutPage,
     },

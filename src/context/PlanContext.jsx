@@ -1,9 +1,11 @@
+
 "use client";
 
 import {
   createContext,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 
@@ -15,14 +17,27 @@ export function PlanProvider({ children }) {
   const [ready, setReady] = useState(false);
   const [toast, setToast] = useState("");
 
-  // Load saved data from localStorage
+  const toastTimer = useRef(null);
+
+  // Load data from localStorage
   useEffect(() => {
     try {
       const storedPlan = localStorage.getItem("fitlog-plan");
       const storedSaved = localStorage.getItem("fitlog-saved");
 
-      if (storedPlan) setPlan(JSON.parse(storedPlan));
-      if (storedSaved) setSaved(JSON.parse(storedSaved));
+      if (storedPlan) {
+        const parsedPlan = JSON.parse(storedPlan);
+        if (Array.isArray(parsedPlan)) {
+          setPlan(parsedPlan);
+        }
+      }
+
+      if (storedSaved) {
+        const parsedSaved = JSON.parse(storedSaved);
+        if (Array.isArray(parsedSaved)) {
+          setSaved(parsedSaved);
+        }
+      }
     } catch (error) {
       console.error("Could not load FitLog data:", error);
     } finally {
@@ -30,24 +45,49 @@ export function PlanProvider({ children }) {
     }
   }, []);
 
-  // Save data whenever it changes
+  // Persist data after localStorage hydration
   useEffect(() => {
     if (!ready) return;
 
-    localStorage.setItem("fitlog-plan", JSON.stringify(plan));
-    localStorage.setItem("fitlog-saved", JSON.stringify(saved));
+    try {
+      localStorage.setItem("fitlog-plan", JSON.stringify(plan));
+      localStorage.setItem("fitlog-saved", JSON.stringify(saved));
+    } catch (error) {
+      console.error("Could not save FitLog data:", error);
+    }
   }, [plan, saved, ready]);
+
+  // Clear toast timer when provider unmounts
+  useEffect(() => {
+    return () => {
+      if (toastTimer.current) {
+        clearTimeout(toastTimer.current);
+      }
+    };
+  }, []);
 
   // Show toast notification
   const showToast = (message) => {
+    if (toastTimer.current) {
+      clearTimeout(toastTimer.current);
+    }
+
     setToast(message);
 
-    // Clear previous notification after a short delay
-    setTimeout(() => setToast(""), 2500);
+    toastTimer.current = setTimeout(() => {
+      setToast("");
+      toastTimer.current = null;
+    }, 2500);
   };
 
+  // Add workout to plan (maximum 5, no duplicates)
   const addToPlan = (workout) => {
-    if (plan.some((item) => item.id === workout.id)) {
+    if (!workout || workout.id == null) {
+      showToast("Invalid workout");
+      return;
+    }
+
+    if (plan.some((item) => String(item.id) === String(workout.id))) {
       showToast("Workout already in your plan");
       return;
     }
@@ -57,34 +97,75 @@ export function PlanProvider({ children }) {
       return;
     }
 
-    setPlan((current) => [...current, { ...workout, done: false }]);
+    setPlan((current) => {
+      // Recheck against the latest state
+      if (
+        current.some(
+          (item) => String(item.id) === String(workout.id)
+        ) ||
+        current.length >= 5
+      ) {
+        return current;
+      }
+
+      return [...current, { ...workout, done: false }];
+    });
+
     showToast("Added to today's plan");
   };
 
+  // Save workout (no duplicates)
   const saveWorkout = (workout) => {
-    if (saved.some((item) => item.id === workout.id)) {
+    if (!workout || workout.id == null) {
+      showToast("Invalid workout");
+      return;
+    }
+
+    if (saved.some((item) => String(item.id) === String(workout.id))) {
       showToast("Workout already saved");
       return;
     }
 
-    setSaved((current) => [...current, workout]);
+    setSaved((current) => {
+      if (
+        current.some(
+          (item) => String(item.id) === String(workout.id)
+        )
+      ) {
+        return current;
+      }
+
+      return [...current, workout];
+    });
+
     showToast("Saved for later");
   };
 
+  // Remove workout from plan
   const removeFromPlan = (id) => {
-    setPlan((current) => current.filter((item) => item.id !== id));
+    setPlan((current) =>
+      current.filter((item) => String(item.id) !== String(id))
+    );
+
     showToast("Removed from today's plan");
   };
 
+  // Remove workout from saved
   const removeFromSaved = (id) => {
-    setSaved((current) => current.filter((item) => item.id !== id));
+    setSaved((current) =>
+      current.filter((item) => String(item.id) !== String(id))
+    );
+
     showToast("Removed from Saved");
   };
 
+  // Mark workout as completed
   const markAsDone = (id) => {
     setPlan((current) =>
       current.map((item) =>
-        item.id === id ? { ...item, done: true } : item
+        String(item.id) === String(id)
+          ? { ...item, done: true }
+          : item
       )
     );
 
@@ -111,6 +192,7 @@ export function PlanProvider({ children }) {
       {toast && (
         <div
           role="status"
+          aria-live="polite"
           className="fixed bottom-6 right-6 z-50 rounded-lg border border-[#C2F800]/40 bg-[#15171D] px-5 py-3 text-sm text-white shadow-xl"
         >
           <span className="mr-2 text-[#C2F800]">✓</span>
